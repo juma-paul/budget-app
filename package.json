@@ -1,0 +1,28 @@
+{
+  "name": "simple-budget",
+  "version": "1.0.0",
+  "description": "an aplication for manually tracking your budget",
+  "main": "index.js",
+  "scripts": {
+    "dev": "STAGE=local tsx src/index.ts",
+    "test": "STAGE=test tsx src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "STAGE=production node dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "^24.0.1",
+    "prisma": "^6.9.0",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.9.0",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "lodash.merge": "^4.6.2"
+  }
+}
