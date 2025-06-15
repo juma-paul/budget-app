@@ -33,3 +33,36 @@ export const signUp = async (req, res, next) => {
     
 }
 
+// Login a user
+export const logIn = async (req, res, next) => {
+    try {
+        const { identifier, password } = req.body
+
+        const user = await prisma.user.findFirst({
+            where: {
+                OR: [
+                    {username: identifier},
+                    {email: identifier}
+                ]
+            }
+        })
+
+        // check if we fould a user
+        if (!user) {
+            return res.status(401).json({error: 'User not found.'})
+        }
+
+        // check if the password provided is valid
+        const isValid = await comparePasswords(password, user.password)
+
+        if (!isValid) {
+            return res.status(401).json({error: 'Invalid password!'})
+        }
+
+        const token = createJwtToken(user)
+        return res.json({token: token})
+    } catch (err) {
+        err.type = 'input'
+        next(err)
+    }
+}
