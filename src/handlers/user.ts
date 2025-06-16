@@ -47,7 +47,7 @@ export const logIn = async (req, res, next) => {
             }
         })
 
-        // check if we fould a user
+        // check if we found a user
         if (!user) {
             return res.status(401).json({error: 'User not found.'})
         }
