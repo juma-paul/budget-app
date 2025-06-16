@@ -16,6 +16,10 @@ app.get('/', (req, res) => {
     res.json({message: 'Hello, Express!'})
 })
 
+// unprotected routes
+app.post('/signup', signUp)
+app.post('/login', logIn)
+
 // global error handling
 app.use((err, req, res, next) => {
     if (err.type === 'input') {

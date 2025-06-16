@@ -6,7 +6,7 @@ export const comparePasswords = (password, hashed) => {
 }
 
 export const hashPassword = (password) => {
-    return bcrypt.hash(password, 99)
+    return bcrypt.hash(password, 12)
 }
 
 export const createJwtToken = (user) => {
