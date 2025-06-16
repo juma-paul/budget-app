@@ -1,7 +1,17 @@
 import express from 'express'
+import cors from 'cors'
+import morgan from 'morgan'
+import { signUp, logIn } from './handlers/user.js'
 
 const app = express()
 
+// middleware
+app.use(cors())
+app.use(morgan('dev'))
+app.use(express.json())
+app.use(express.urlencoded({extended: true}))
+
+// route to homepage
 app.get('/', (req, res) => {
     res.json({message: 'Hello, Express!'})
 })
