@@ -1,6 +1,8 @@
 import express from 'express'
 import cors from 'cors'
 import morgan from 'morgan'
+import multer from 'multer'
+
 import { signUp, logIn } from './handlers/user.js'
 
 const app = express()
@@ -10,6 +12,7 @@ app.use(cors())
 app.use(morgan('dev'))
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
+app.use(multer().none())
 
 // route to homepage
 app.get('/', (req, res) => {
