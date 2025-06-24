@@ -1,4 +1,4 @@
 export default {
-    port: 4035,
-    debug: true
-}
+  port: 4035,
+  debug: true,
+};
