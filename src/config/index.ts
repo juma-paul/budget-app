@@ -18,7 +18,9 @@ const defaultConfigs = {
   env: process.env.NODE_ENV,
   port: 8734,
   secrets: {
-    jwt: process.env.JWT_SECRET,
+    jwt_secret: process.env.JWT_SECRET,
+    jwt_refresh_secret: process.env.JWT_REFRESH_SECRET,
+    csrf_secret: process.env.CSRF_SECRET,
     dbUrl: process.env.DATABASE_URL,
   },
 };

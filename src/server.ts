@@ -2,27 +2,38 @@ import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
-import { signUp, logIn } from "./handlers/user.js";
+import { signUp, logIn, logOut } from "./handlers/user.js";
+import { protect, freshAccessToken } from "./modules/authentication.js";
+import { getCsrfToken, doubleCsrfProtection } from "./utils/csrf.js";
 
 const app = express();
 
-// middleware
+// Middleware
 app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// route to homepage
+// Route to homepage
 app.get("/", (req, res) => {
   res.json({ message: "Hello, Express!" });
 });
 
-// unprotected routes
+// Public routes
+app.get("/csrf-token", getCsrfToken);
+
+// Apply CSRF protection to all routes below
+app.use(doubleCsrfProtection);
+
+// Protected routes
 app.post("/signup", signUp);
 app.post("/login", logIn);
+app.post("/refresh-token", freshAccessToken);
+app.post("/logout", logOut);
+app.use("/api", protect);
 
-// global error handling
+// Global error handling
 app.use((err, req, res, next) => {
   if (err.type === "input") {
     return res

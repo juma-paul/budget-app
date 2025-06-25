@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { configs } from "../config/index.js";
 import { createAccessToken, setAccessTokenCookie } from "../utils/tokens.js";
 
 export const comparePasswords = (password, hashed) => {
@@ -13,15 +14,15 @@ export const hashPassword = (password) => {
 export const protect = (req, res, next) => {
   const token = req.cookies.accessToken;
 
-  // check if a token is provided
+  // Check if a token is provided
   if (!token) {
     res.status(401).json({ error: "You are not authorized." });
     return;
   }
 
-  // check if token is signed by the same secret
+  // Check if token is signed by the same secret
   try {
-    const user = jwt.verify(token, process.env.JWT_SECRET);
+    const user = jwt.verify(token, configs.secrets.jwt_secret);
     req.user = user;
     next();
   } catch (err) {
@@ -40,7 +41,7 @@ export const freshAccessToken = (req, res) => {
   }
 
   try {
-    const user = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+    const user = jwt.verify(token, configs.secrets.jwt_refresh_secret);
     const newAccessToken = createAccessToken(user);
     setAccessTokenCookie(res, newAccessToken);
     res.status(200).json({ success: "Access token refreshed." });
