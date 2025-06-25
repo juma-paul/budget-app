@@ -1,9 +1,13 @@
 import prisma from "../database.js";
+import { comparePasswords, hashPassword } from "../modules/authentication.js";
 import {
-  comparePasswords,
-  hashPassword,
-  createJwtToken,
-} from "../modules/authentication.js";
+  createAccessToken,
+  setAccessTokenCookie,
+  clearAccessTokenCookie,
+  createRefreshToken,
+  setRefreshTokenCookie,
+  clearRefreshTokenCookie,
+} from "../utils/tokens.js";
 
 // Create a new user
 export const signUp = async (req, res, next) => {
@@ -30,8 +34,17 @@ export const signUp = async (req, res, next) => {
       },
     });
 
-    const token = createJwtToken(user);
-    return res.json({ token: token });
+    // Create tokens
+    const accessToken = createAccessToken(user);
+    const refreshToken = createRefreshToken(user);
+
+    // Set tokens as cookies
+    setAccessTokenCookie(res, accessToken);
+    setRefreshTokenCookie(res, refreshToken);
+
+    return res.status(200).json({
+      success: `Welcome, ${username}! We're happy to have you on board`,
+    });
   } catch (err) {
     err.type = "input";
     next(err);
@@ -49,22 +62,37 @@ export const logIn = async (req, res, next) => {
       },
     });
 
-    // check if we found a user
+    // Check if we found a user
     if (!user) {
       return res.status(401).json({ error: "User not found." });
     }
 
-    // check if the password provided is valid
+    // Check if the password provided is valid
     const isValid = await comparePasswords(password, user.password);
 
     if (!isValid) {
-      return res.status(401).json({ error: "Invalid password!" });
+      return res.status(401).json({ error: "Invalid password." });
     }
 
-    const token = createJwtToken(user);
-    return res.json({ token: token });
+    // Create tokens
+    const accessToken = createAccessToken(user);
+    const refreshToken = createRefreshToken(user);
+
+    // Set tokens as cookies
+    setAccessTokenCookie(res, accessToken);
+    setRefreshTokenCookie(res, refreshToken);
+
+    return res.status(200).json({ success: "Successfully logged in." });
   } catch (err) {
     err.type = "input";
     next(err);
   }
+};
+
+// Logout a user
+export const logOut = (req, res) => {
+  clearAccessTokenCookie(res);
+  clearRefreshTokenCookie(res);
+
+  return res.status(200).json({ success: "Logged out successfully." });
 };
